@@ -1,0 +1,35 @@
+# Python
+*.pyc
+*.pyo
+__pycache__/
+
+# Entorno virtual
+venv/
+env/
+.env/
+
+# Base de datos
+db.sqlite3
+
+# Archivos estáticos generados
+static/
+
+# Archivos de medios cargados por el usuario
+media/
+
+# Archivos de configuración de editor (VSCode, PyCharm, etc.)
+.vscode/
+.idea/
+*.iml
+
+# Archivos de cobertura
+.coverage
+*.cover
+nosetests.xml
+coverage.xml
+
+# Archivos de configuración local
+*.env
+*.ini
+*.log
+*.bak

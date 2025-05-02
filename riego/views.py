@@ -1,12 +1,12 @@
 # riego/views.py
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 from .serializers import RegistroUsuarioSerializer
 
 @api_view(['POST'])
-@permission_classes([AllowAny])  # Permite registro sin estar autenticado
+@permission_classes([AllowAny])  # Permite registro sin autenticación
 def registro_usuario(request):
     serializer = RegistroUsuarioSerializer(data=request.data)
     if serializer.is_valid():
@@ -18,3 +18,11 @@ def registro_usuario(request):
 @permission_classes([AllowAny])
 def home(request):
     return Response({'message': 'Bienvenido a la API de AiRiego'})
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])  # Requiere autenticación
+def perfil_usuario(request):
+    return Response({
+        'username': request.user.username,
+        'email': request.user.email
+    })
