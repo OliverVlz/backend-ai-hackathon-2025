@@ -1,0 +1,70 @@
+[
+  {
+    "model": "riego.tipocultivo",
+    "pk": 1,
+    "fields": {
+      "nombre": "Maíz",
+      "descripcion": "Cultivo de maíz común",
+      "coef_plantula": 0.3,
+      "coef_adulto": 1.15,
+      "coef_anciano": 0.4,
+      "es_predefinido": true
+    }
+  },
+  {
+    "model": "riego.tipocultivo",
+    "pk": 2,
+    "fields": {
+      "nombre": "Tomate",
+      "descripcion": "Cultivo de tomate",
+      "coef_plantula": 0.7,
+      "coef_adulto": 1.05,
+      "coef_anciano": 0.8,
+      "es_predefinido": true
+    }
+  },
+  {
+    "model": "riego.tipocultivo",
+    "pk": 3,
+    "fields": {
+      "nombre": "Alfalfa",
+      "descripcion": "Cultivo de alfalfa",
+      "coef_plantula": 0.4,
+      "coef_adulto": 1.2,
+      "coef_anciano": 1.15,
+      "es_predefinido": true
+    }
+  },
+  {
+    "model": "riego.tiporiego",
+    "pk": 1,
+    "fields": {
+      "nombre": "superficial",
+      "eficiencia": 45.0
+    }
+  },
+  {
+    "model": "riego.tiporiego",
+    "pk": 2,
+    "fields": {
+      "nombre": "aspersion",
+      "eficiencia": 75.0
+    }
+  },
+  {
+    "model": "riego.tiporiego",
+    "pk": 3,
+    "fields": {
+      "nombre": "goteo",
+      "eficiencia": 92.0
+    }
+  },
+  {
+    "model": "riego.tiporiego",
+    "pk": 4,
+    "fields": {
+      "nombre": "subterraneo",
+      "eficiencia": 87.0
+    }
+  }
+]

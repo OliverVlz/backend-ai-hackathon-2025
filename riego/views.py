@@ -15,11 +15,17 @@ from .serializers import (
 @api_view(['POST'])
 @permission_classes([AllowAny])  # Permite registro sin autenticación
 def registro_usuario(request):
-    serializer = RegistroUsuarioSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save()
-        return Response({'message': 'Usuario creado exitosamente.'}, status=status.HTTP_201_CREATED)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    try:
+        print(f"Datos recibidos: {request.data}")
+        serializer = RegistroUsuarioSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'message': 'Usuario creado exitosamente.'}, status=status.HTTP_201_CREATED)
+        print(f"Errores de validación: {serializer.errors}")
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        print(f"Error en registro_usuario: {str(e)}")
+        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
@@ -39,13 +45,13 @@ def perfil_usuario(request):
 class TipoCultivoViewSet(viewsets.ModelViewSet):
     queryset = TipoCultivo.objects.all()
     serializer_class = TipoCultivoSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]  # Permitir acceso público a los tipos de cultivo
 
 
 class TipoRiegoViewSet(viewsets.ModelViewSet):
     queryset = TipoRiego.objects.all()
     serializer_class = TipoRiegoSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]  # Permitir acceso público a los tipos de riego
 
 
 class ZonaCultivoViewSet(viewsets.ModelViewSet):

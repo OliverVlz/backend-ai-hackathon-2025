@@ -40,12 +40,28 @@ class TipoRiegoSerializer(serializers.ModelSerializer):
 
 class ZonaCultivoSerializer(serializers.ModelSerializer):
     creado_por = serializers.PrimaryKeyRelatedField(read_only=True, default=serializers.CurrentUserDefault())
+    tipo_cultivo_nombre = serializers.SerializerMethodField()
+    tipo_riego_nombre = serializers.SerializerMethodField()
     
     class Meta:
         model = ZonaCultivo
         fields = ['id', 'nombre', 'coordenadas', 'area', 'creado_por', 'fecha_creacion',
-                  'tipo_cultivo', 'etapa_crecimiento', 'tipo_riego', 'tasa_flujo', 'activo']
-        read_only_fields = ['fecha_creacion']
+                  'tipo_cultivo', 'tipo_cultivo_nombre', 'etapa_crecimiento', 'tipo_riego', 
+                  'tipo_riego_nombre', 'tasa_flujo', 'activo']
+        read_only_fields = ['fecha_creacion', 'tipo_cultivo_nombre', 'tipo_riego_nombre']
+    
+    def get_tipo_cultivo_nombre(self, obj):
+        if obj.tipo_cultivo:
+            return obj.tipo_cultivo.nombre
+        return None
+        
+    def get_tipo_riego_nombre(self, obj):
+        if obj.tipo_riego:
+            try:
+                return obj.tipo_riego.get_nombre_display()
+            except AttributeError:
+                return obj.tipo_riego.nombre
+        return None
     
     def create(self, validated_data):
         # Asignar el usuario actual como creador
