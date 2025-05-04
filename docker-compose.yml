@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  backend:
+    build: .
+    command: >
+      bash -c "python manage.py migrate &&
+              python manage.py cargar_datos_iniciales &&
+              python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/app
+      - sqlite_data:/app/db  # Montar el volumen para la base de datos SQLite
+    ports:
+      - "8000:8000"
+    environment:
+      - DEBUG=True
+      - SECRET_KEY=dev-secret-key
+    networks:
+      - airiego_network
+    restart: unless-stopped
+
+  # Servicio para el frontend (descomentar cuando esté listo)
+  # frontend:
+  #   build: ../frontend-ai-hackathon-2025/project
+  #   volumes:
+  #     - ../frontend-ai-hackathon-2025/project:/app
+  #   ports:
+  #     - "4200:4200"
+  #   command: npm start
+  #   networks:
+  #     - airiego_network
+  #   depends_on:
+  #     - backend
+
+volumes:
+  sqlite_data:  # Volumen para persistir la base de datos SQLite
+
+networks:
+  airiego_network:  # Definición de la red para la comunicación entre servicios
+    driver: bridge
