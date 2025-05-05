@@ -6,10 +6,10 @@ from rest_framework import status, viewsets
 from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
-from .models import TipoCultivo, TipoRiego, ZonaCultivo, Cronograma, DetalleCronograma
+from .models import TipoCultivo, TipoRiego, Cultivo, Cronograma, DetalleCronograma, Ubicacion
 from .serializers import (
     RegistroUsuarioSerializer, TipoCultivoSerializer, TipoRiegoSerializer,
-    ZonaCultivoSerializer, CronogramaSerializer, DetalleCronogramaSerializer
+    CultivoSerializer, CronogramaSerializer, DetalleCronogramaSerializer, UbicacionSerializer
 )
 
 @api_view(['POST'])
@@ -43,54 +43,52 @@ def perfil_usuario(request):
 
 # ViewSets para los modelos principales
 class TipoCultivoViewSet(viewsets.ModelViewSet):
-    queryset = TipoCultivo.objects.all()
     serializer_class = TipoCultivoSerializer
-    permission_classes = [AllowAny]  # Permitir acceso público a los tipos de cultivo
+    queryset = TipoCultivo.objects.all()
+    permission_classes = [IsAuthenticated]
 
 
 class TipoRiegoViewSet(viewsets.ModelViewSet):
-    queryset = TipoRiego.objects.all()
     serializer_class = TipoRiegoSerializer
-    permission_classes = [AllowAny]  # Permitir acceso público a los tipos de riego
-
-
-class ZonaCultivoViewSet(viewsets.ModelViewSet):
-    serializer_class = ZonaCultivoSerializer
+    queryset = TipoRiego.objects.all()
     permission_classes = [IsAuthenticated]
-    
+
+
+class CultivoViewSet(viewsets.ModelViewSet):
+    serializer_class = CultivoSerializer
+    permission_classes = [IsAuthenticated]
+
     def get_queryset(self):
-        # Filtrar zonas por usuario autenticado
-        return ZonaCultivo.objects.filter(creado_por=self.request.user)
-    
+        return Cultivo.objects.filter(propietario=self.request.user)
+
     def perform_create(self, serializer):
-        serializer.save(creado_por=self.request.user)
+        serializer.save(propietario=self.request.user)
 
 
 class CronogramaViewSet(viewsets.ModelViewSet):
     serializer_class = CronogramaSerializer
     permission_classes = [IsAuthenticated]
-    
+
     def get_queryset(self):
-        # Filtrar cronogramas por usuario autenticado
-        return Cronograma.objects.filter(zona_cultivo__creado_por=self.request.user)
+        return Cronograma.objects.filter(cultivo__propietario=self.request.user)
 
 
-# Vista para generar un nuevo cronograma para una zona específica
+# Vista para generar un nuevo cronograma para un cultivo específico
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def generar_cronograma(request, zona_id):
+def generar_cronograma(request, cultivo_id):
     try:
-        zona = ZonaCultivo.objects.get(id=zona_id, creado_por=request.user)
-        
+        cultivo = Cultivo.objects.get(id=cultivo_id, propietario=request.user)
+
         # Aquí iría la lógica para obtener datos climáticos y calcular necesidades de agua
         # Por ahora, generamos un cronograma de ejemplo
-        
+
         # Crear cronograma
         cronograma = Cronograma.objects.create(
-            zona_cultivo=zona,
+            cultivo=cultivo,
             fecha_inicio=timezone.now().date()
         )
-        
+
         # Crear detalles de ejemplo
         for i in range(1, 8):
             DetalleCronograma.objects.create(
@@ -101,9 +99,19 @@ def generar_cronograma(request, zona_id):
                 duracion_horas=2.5,
                 cantidad_agua=500 * i  # Valor de ejemplo
             )
-        
+
         serializer = CronogramaSerializer(cronograma)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-        
-    except ZonaCultivo.DoesNotExist:
-        return Response({"error": "Zona de cultivo no encontrada"}, status=status.HTTP_404_NOT_FOUND)
+
+    except Cultivo.DoesNotExist:
+        return Response({"error": "Cultivo no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+
+class UbicacionViewSet(viewsets.ModelViewSet):
+    serializer_class = UbicacionSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Ubicacion.objects.filter(creada_por=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(creada_por=self.request.user)
