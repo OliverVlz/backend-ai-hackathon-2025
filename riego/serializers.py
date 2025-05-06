@@ -22,6 +22,21 @@ class RegistroUsuarioSerializer(serializers.ModelSerializer):
 
 
 class TipoCultivoSerializer(serializers.ModelSerializer):
+    def validate_coef_plantula(self, value):
+        if not (0 <= value <= 2):
+            raise serializers.ValidationError("El coeficiente de plántula debe estar entre 0 y 2.")
+        return value
+
+    def validate_coef_crecimiento(self, value):
+        if not (0 <= value <= 2):
+            raise serializers.ValidationError("El coeficiente de crecimiento debe estar entre 0 y 2.")
+        return value
+
+    def validate_coef_madurez(self, value):
+        if not (0 <= value <= 2):
+            raise serializers.ValidationError("El coeficiente de madurez debe estar entre 0 y 2.")
+        return value
+
     class Meta:
         model = TipoCultivo
         fields = '__all__'
@@ -34,10 +49,15 @@ class TipoRiegoSerializer(serializers.ModelSerializer):
 
 
 class CultivoSerializer(serializers.ModelSerializer):
+    def validate_tasa_flujo(self, value):
+        if value <= 0:
+            raise serializers.ValidationError("La tasa de flujo debe ser mayor a 0.")
+        return value
+
     class Meta:
         model = Cultivo
         fields = '__all__'
-        read_only_fields = ['propietario', 'fecha_creacion']
+        read_only_fields = ['propietario']
 
 
 class DetalleCronogramaSerializer(serializers.ModelSerializer):

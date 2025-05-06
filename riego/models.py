@@ -11,8 +11,8 @@ class TipoCultivo(models.Model):
     descripcion = models.TextField(blank=True)
     # Coeficientes para diferentes etapas
     coef_plantula = models.FloatField(default=0.0)
-    coef_adulto = models.FloatField(default=0.0)
-    coef_anciano = models.FloatField(default=0.0)
+    coef_crecimiento = models.FloatField(default=0.0)
+    coef_madurez = models.FloatField(default=0.0)
     es_predefinido = models.BooleanField(default=True)
     creado_por = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     
@@ -35,7 +35,7 @@ class TipoRiego(models.Model):
     
     def save(self, *args, **kwargs):
         # Asignar valores predeterminados de eficiencia según el tipo
-        if not self.eficiencia:
+        if self.eficiencia in [None, 0]:
             if self.nombre == 'superficial':
                 self.eficiencia = 0.45  # 45%
             elif self.nombre == 'aspersion':
@@ -44,7 +44,6 @@ class TipoRiego(models.Model):
                 self.eficiencia = 0.92  # 92%
             elif self.nombre == 'subterraneo':
                 self.eficiencia = 0.87  # 87%
-        
         super().save(*args, **kwargs)
 
 class Ubicacion(models.Model):
@@ -60,7 +59,10 @@ class Ubicacion(models.Model):
 
     def save(self, *args, **kwargs):
         # Calcular área en m² usando Shapely y pyproj
-        poligono = shape(self.coordenadas)
+        try:
+            poligono = shape(self.coordenadas)
+        except Exception as e:
+            raise ValueError(f"Coordenadas inválidas: {e}")
         lon, lat = poligono.centroid.x, poligono.centroid.y
         utm_zone = int((lon + 180) / 6) + 1
         is_northern = lat >= 0
@@ -76,8 +78,8 @@ class Ubicacion(models.Model):
 class Cultivo(models.Model):
     ETAPAS = [
         ('plantula', 'Plántula'),
-        ('adulto', 'Adulto'),
-        ('anciano', 'Anciano'),
+        ('crecimiento', 'Crecimiento'),
+        ('madurez', 'Madurez'),
     ]
     
     nombre = models.CharField(max_length=200)

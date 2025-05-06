@@ -3,7 +3,7 @@ from .models import TipoCultivo, TipoRiego, Cultivo, Cronograma, DetalleCronogra
 
 @admin.register(TipoCultivo)
 class TipoCultivoAdmin(admin.ModelAdmin):
-    list_display = ('nombre', 'coef_plantula', 'coef_adulto', 'coef_anciano', 'es_predefinido')
+    list_display = ('nombre', 'coef_plantula', 'coef_crecimiento', 'coef_madurez', 'es_predefinido')
     search_fields = ('nombre',)
 
 @admin.register(TipoRiego)
