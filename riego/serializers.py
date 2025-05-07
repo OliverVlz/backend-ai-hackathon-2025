@@ -20,6 +20,10 @@ class RegistroUsuarioSerializer(serializers.ModelSerializer):
         user = User.objects.create_user(**validated_data)
         return user
 
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email']
 
 class TipoCultivoSerializer(serializers.ModelSerializer):
     def validate_coef_plantula(self, value):
@@ -47,8 +51,15 @@ class TipoRiegoSerializer(serializers.ModelSerializer):
         model = TipoRiego
         fields = '__all__'
 
+class UbicacionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Ubicacion
+        fields = '__all__'
 
 class CultivoSerializer(serializers.ModelSerializer):
+    tipo_cultivo_info = TipoCultivoSerializer(source='tipo_cultivo', read_only=True)
+    tipo_riego_info = TipoRiegoSerializer(source='tipo_riego', read_only=True)
+    ubicacion_info = UbicacionSerializer(source='ubicacion', read_only=True)
     def validate_tasa_flujo(self, value):
         if value <= 0:
             raise serializers.ValidationError("La tasa de flujo debe ser mayor a 0.")

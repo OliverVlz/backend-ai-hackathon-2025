@@ -9,7 +9,7 @@ from django.utils import timezone
 from .models import TipoCultivo, TipoRiego, Cultivo, Cronograma, DetalleCronograma, Ubicacion
 from .serializers import (
     RegistroUsuarioSerializer, TipoCultivoSerializer, TipoRiegoSerializer,
-    CultivoSerializer, CronogramaSerializer, DetalleCronogramaSerializer, UbicacionSerializer
+    CultivoSerializer, CronogramaSerializer, DetalleCronogramaSerializer, UbicacionSerializer, UserProfileSerializer
 )
 
 @api_view(['POST'])
@@ -33,12 +33,10 @@ def home(request):
     return Response({'message': 'Bienvenido a la API de AiRiego'})
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])  # Requiere autenticación
+@permission_classes([IsAuthenticated])
 def perfil_usuario(request):
-    return Response({
-        'username': request.user.username,
-        'email': request.user.email
-    })
+    serializer = UserProfileSerializer(request.user)
+    return Response(serializer.data)
 
 
 # ViewSets para los modelos principales

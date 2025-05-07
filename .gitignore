@@ -30,3 +30,17 @@ coverage.xml
 *.ini
 *.log
 *.bak
+
+# Datos de .Lingma
+*.lingma/
+
+*.vscode/
+*.idea/
+*.iml
+
+# Archivos de configuración de editor (VSCode, PyCharm, etc.)
+.vscode/
+.idea/
+*.iml
+
+*.Lingma
