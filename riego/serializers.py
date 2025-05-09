@@ -55,7 +55,7 @@ class UbicacionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ubicacion
         fields = '__all__'
-
+        read_only_fields = ['area', 'creada_por', 'fecha_creacion']
 class CultivoSerializer(serializers.ModelSerializer):
     tipo_cultivo_info = TipoCultivoSerializer(source='tipo_cultivo', read_only=True)
     tipo_riego_info = TipoRiegoSerializer(source='tipo_riego', read_only=True)
@@ -74,21 +74,31 @@ class CultivoSerializer(serializers.ModelSerializer):
 class DetalleCronogramaSerializer(serializers.ModelSerializer):
     class Meta:
         model = DetalleCronograma
-        fields = '__all__'
-
+        fields = [
+            'id',
+            'dia',
+            'fecha',
+            'hora_inicio',
+            'duracion_horas',
+            'cantidad_agua',
+            'et_diario',
+            'precipitacion',
+        ]
+        read_only_fields = fields
 
 class CronogramaSerializer(serializers.ModelSerializer):
     detalles = DetalleCronogramaSerializer(many=True, read_only=True)
-    
+
     class Meta:
         model = Cronograma
-        fields = ['id', 'cultivo', 'fecha_generacion', 'fecha_inicio',
-                  'et_promedio', 'precipitacion_promedio', 'detalles']
-        read_only_fields = ['fecha_generacion']
+        fields = [
+            'id',
+            'cultivo',
+            'fecha_generacion',
+            'fecha_inicio',
+            'et_promedio',
+            'precipitacion_promedio',
+            'detalles',
+        ]
+        read_only_fields = ['id', 'fecha_generacion', 'detalles']
 
-
-class UbicacionSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Ubicacion
-        fields = '__all__'
-        read_only_fields = ['area', 'creada_por', 'fecha_creacion']

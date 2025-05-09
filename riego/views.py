@@ -7,10 +7,51 @@ from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from .models import TipoCultivo, TipoRiego, Cultivo, Cronograma, DetalleCronograma, Ubicacion
+from .services.weather_service import get_centroid_lat_lon, obtener_datos_meteorologicos
+from .services.cultivo_service import generar_cronograma_para_cultivo
 from .serializers import (
     RegistroUsuarioSerializer, TipoCultivoSerializer, TipoRiegoSerializer,
     CultivoSerializer, CronogramaSerializer, DetalleCronogramaSerializer, UbicacionSerializer, UserProfileSerializer
 )
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def generar_cronograma(request, cultivo_id):
+    """
+    Endpoint POST /cultivos/{cultivo_id}/generar-cronograma/
+    1) Valida que el cultivo pertenezca al usuario.
+    2) Calcula centroide de la ubicación.
+    3) Trae datos de clima (ET₀ y precipitación) para 7 días.
+    4) Elimina cualquier cronograma anterior si lo deseas.
+    5) Llama al service para generar el cronograma real.
+    6) Devuelve el cronograma serializado.
+    """
+    cultivo = get_object_or_404(Cultivo, pk=cultivo_id, propietario=request.user)
+
+    # (Opcional) limpia cronogramas anteriores
+    cultivo.cronogramas.all().delete()
+
+    # 1) Lat/Lon desde su GeoJSON
+    geojson = cultivo.ubicacion.coordenadas
+    lat, lon = get_centroid_lat_lon(geojson)
+
+    # 2) Obtiene clima para 7 días
+    try:
+        clima = obtener_datos_meteorologicos(lat, lon, days=7)
+    except Exception as e:
+        return Response(
+            {'error': f'No se pudo obtener datos meteorológicos: {e}'},
+            status=status.HTTP_503_SERVICE_UNAVAILABLE
+        )
+
+    # 3) Genera y guarda el cronograma real (incluye detalles con et_diario y precipitacion)
+    try:
+        cronograma = generar_cronograma_para_cultivo(cultivo, clima)
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+    # 4) Serializa y responde
+    serializer = CronogramaSerializer(cronograma)
+    return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 @api_view(['POST'])
 @permission_classes([AllowAny])  # Permite registro sin autenticación
@@ -70,39 +111,6 @@ class CronogramaViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return Cronograma.objects.filter(cultivo__propietario=self.request.user)
 
-
-# Vista para generar un nuevo cronograma para un cultivo específico
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def generar_cronograma(request, cultivo_id):
-    try:
-        cultivo = Cultivo.objects.get(id=cultivo_id, propietario=request.user)
-
-        # Aquí iría la lógica para obtener datos climáticos y calcular necesidades de agua
-        # Por ahora, generamos un cronograma de ejemplo
-
-        # Crear cronograma
-        cronograma = Cronograma.objects.create(
-            cultivo=cultivo,
-            fecha_inicio=timezone.now().date()
-        )
-
-        # Crear detalles de ejemplo
-        for i in range(1, 8):
-            DetalleCronograma.objects.create(
-                cronograma=cronograma,
-                dia=i,
-                fecha=timezone.now().date() + timezone.timedelta(days=i-1),
-                hora_inicio="22:00",
-                duracion_horas=2.5,
-                cantidad_agua=500 * i  # Valor de ejemplo
-            )
-
-        serializer = CronogramaSerializer(cronograma)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-    except Cultivo.DoesNotExist:
-        return Response({"error": "Cultivo no encontrado"}, status=status.HTTP_404_NOT_FOUND)
 
 class UbicacionViewSet(viewsets.ModelViewSet):
     serializer_class = UbicacionSerializer
