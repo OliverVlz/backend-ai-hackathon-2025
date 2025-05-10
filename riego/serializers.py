@@ -72,22 +72,16 @@ class CultivoSerializer(serializers.ModelSerializer):
 
 
 class DetalleCronogramaSerializer(serializers.ModelSerializer):
-    cantidad_agua_gal = serializers.SerializerMethodField()
     duracion_formateada = serializers.SerializerMethodField()
 
     class Meta:
         model = DetalleCronograma
         fields = [
             'id', 'dia', 'fecha', 'hora_inicio',
-            'duracion_horas', 'cantidad_agua',
-            'cantidad_agua_gal', 'duracion_formateada',
+            'duracion_horas', 'cantidad_agua', 'duracion_formateada',
             'et_diario', 'precipitacion',
         ]
         read_only_fields = fields
-
-    def get_cantidad_agua_gal(self, obj):
-        return round(obj.cantidad_agua / 3.78541, 2)
-
     def get_duracion_formateada(self, obj):
         horas = int(obj.duracion_horas)
         minutos = round((obj.duracion_horas - horas) * 60)

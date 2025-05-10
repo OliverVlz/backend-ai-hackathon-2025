@@ -19,14 +19,14 @@ class UbicacionAdmin(admin.ModelAdmin):
 
 @admin.register(Cultivo)
 class CultivoAdmin(admin.ModelAdmin):
-    list_display = ('nombre', 'tipo_cultivo', 'etapa_crecimiento', 'tipo_riego', 'tasa_flujo', 'activo', 'propietario')
+    list_display = ('id','nombre', 'tipo_cultivo', 'etapa_crecimiento', 'tipo_riego', 'tasa_flujo', 'activo', 'propietario')
     search_fields = ('nombre', 'propietario__username', 'tipo_cultivo__nombre')
     list_filter = ('tipo_cultivo', 'etapa_crecimiento', 'tipo_riego', 'activo', 'propietario')
 
 @admin.register(Cronograma)
 class CronogramaAdmin(admin.ModelAdmin):
-    list_display = ('cultivo', 'fecha_generacion', 'fecha_inicio')
-    list_filter = ('fecha_generacion', 'fecha_inicio')
+    list_display = ('cultivo', 'fecha_generacion', 'fecha_inicio', 'et_promedio', 'precipitacion_promedio')
+    list_filter = ('fecha_generacion', 'fecha_inicio', 'et_promedio', 'precipitacion_promedio')
     search_fields = ('cultivo__nombre',)
 
 @admin.register(DetalleCronograma)

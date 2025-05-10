@@ -115,6 +115,11 @@ class DetalleCronograma(models.Model):
     et_diario = models.FloatField(null=True, blank=True)
     precipitacion = models.FloatField(null=True, blank=True)
     
+    def duracion_formateada(self):
+        # Suponiendo que la duración está en horas, puedes formatearla como horas y minutos
+        horas = int(self.duracion_horas)
+        minutos = int((self.duracion_horas - horas) * 60)
+        return f"{horas}h {minutos}m"
     class Meta:
         ordering = ['dia']
     

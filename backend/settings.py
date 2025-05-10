@@ -15,7 +15,7 @@ from datetime import timedelta
 from decouple import config
 
 
-OPENAI_API_KEY = config('OPENAI_API_KEY')
+QWEN_API_KEY = config('QWEN_API_KEY')
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -162,6 +162,9 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_FILTER_BACKENDS': (
+        'rest_framework.filters.OrderingFilter',
     )
 }
 
