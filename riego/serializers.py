@@ -72,33 +72,50 @@ class CultivoSerializer(serializers.ModelSerializer):
 
 
 class DetalleCronogramaSerializer(serializers.ModelSerializer):
+    cantidad_agua_gal = serializers.SerializerMethodField()
+    duracion_formateada = serializers.SerializerMethodField()
+
     class Meta:
         model = DetalleCronograma
         fields = [
-            'id',
-            'dia',
-            'fecha',
-            'hora_inicio',
-            'duracion_horas',
-            'cantidad_agua',
-            'et_diario',
-            'precipitacion',
+            'id', 'dia', 'fecha', 'hora_inicio',
+            'duracion_horas', 'cantidad_agua',
+            'cantidad_agua_gal', 'duracion_formateada',
+            'et_diario', 'precipitacion',
         ]
         read_only_fields = fields
 
+    def get_cantidad_agua_gal(self, obj):
+        return round(obj.cantidad_agua / 3.78541, 2)
+
+    def get_duracion_formateada(self, obj):
+        horas = int(obj.duracion_horas)
+        minutos = round((obj.duracion_horas - horas) * 60)
+        return f"{horas}h {minutos}min"
+
 class CronogramaSerializer(serializers.ModelSerializer):
+    cultivo_nombre = serializers.CharField(source='cultivo.nombre', read_only=True)
+    ubicacion = serializers.SerializerMethodField()  # Cambiar a SerializerMethodField
     detalles = DetalleCronogramaSerializer(many=True, read_only=True)
 
     class Meta:
         model = Cronograma
         fields = [
-            'id',
-            'cultivo',
-            'fecha_generacion',
-            'fecha_inicio',
-            'et_promedio',
-            'precipitacion_promedio',
+            'id', 'cultivo', 'cultivo_nombre', 'ubicacion',
+            'fecha_generacion', 'fecha_inicio',
+            'et_promedio', 'precipitacion_promedio',
             'detalles',
         ]
-        read_only_fields = ['id', 'fecha_generacion', 'detalles']
+        read_only_fields = ['id', 'fecha_generacion', 'detalles', 'cultivo_nombre', 'ubicacion']
 
+    def get_ubicacion(self, obj):
+        # Combinar ciudad y país
+        ciudad = obj.cultivo.ubicacion.ciudad if obj.cultivo.ubicacion else None
+        pais = obj.cultivo.ubicacion.pais if obj.cultivo.ubicacion else None
+        if ciudad and pais:
+            return f"{ciudad}, {pais}"
+        elif ciudad:
+            return ciudad
+        elif pais:
+            return pais
+        return "Ubicación desconocida"
