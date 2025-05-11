@@ -1,46 +1,28 @@
-# Python
+# Python artefacts
 *.pyc
-*.pyo
 __pycache__/
 
 # Entorno virtual
 venv/
 env/
-.env/
 
-# Archivos estáticos generados
-static/
+# Sólo ignorar el build output de collectstatic:
+staticfiles/
 
 # Archivos de medios cargados por el usuario
 media/
 
-# Archivos de configuración de editor (VSCode, PyCharm, etc.)
-.vscode/
-.idea/
-*.iml
-
-# Archivos de cobertura
-.coverage
-*.cover
-nosetests.xml
-coverage.xml
-
-# Archivos de configuración local
+# Configuración local y logs
 *.env
 *.ini
 *.log
 *.bak
 
-# Datos de .Lingma
-*.lingma/
-
-*.vscode/
-*.idea/
-*.iml
-
-# Archivos de configuración de editor (VSCode, PyCharm, etc.)
+# IDEs
 .vscode/
 .idea/
 *.iml
 
-*.Lingma
+# Cobertura
+.coverage
+coverage.xml
