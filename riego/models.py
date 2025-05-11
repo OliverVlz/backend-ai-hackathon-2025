@@ -90,7 +90,7 @@ class Cultivo(models.Model):
     tasa_flujo = models.FloatField(help_text="Tasa de flujo en galones/hora")
     activo = models.BooleanField(default=True)
     propietario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='cultivos')
-
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
     def __str__(self):
         return f"{self.nombre} ({self.tipo_cultivo.nombre})"
 

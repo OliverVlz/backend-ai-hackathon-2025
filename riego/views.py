@@ -15,6 +15,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .chatbot.context import construir_contexto
 from .chatbot.services import obtener_respuesta_ia
+from rest_framework.decorators import action
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -139,13 +140,20 @@ class TipoRiegoViewSet(viewsets.ModelViewSet):
 class CultivoViewSet(viewsets.ModelViewSet):
     serializer_class = CultivoSerializer
     permission_classes = [IsAuthenticated]
-
+    
     def get_queryset(self):
         return Cultivo.objects.filter(propietario=self.request.user)
 
     def perform_create(self, serializer):
         serializer.save(propietario=self.request.user)
 
+    @action(detail=False, methods=['get'])
+    def reciente(self, request):
+        cultivo = self.get_queryset().order_by('-fecha_creacion').first()
+        if cultivo:
+            serializer = self.get_serializer(cultivo)
+            return Response(serializer.data)
+        return Response({"detail": "No hay cultivos."}, status=404)
 
 class CronogramaViewSet(viewsets.ModelViewSet):
     serializer_class = CronogramaSerializer
