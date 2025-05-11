@@ -15,40 +15,40 @@ class Command(BaseCommand):
                     'nombre': 'Maíz',
                     'descripcion': 'Cultivo de maíz',
                     'coef_plantula': 0.3,
-                    'coef_adulto': 1.2,
-                    'coef_anciano': 0.6,
+                    'coef_crecimiento': 1.2,  # Reemplazado coef_adulto por coef_crecimiento
+                    'coef_madurez': 0.6,      # Reemplazado coef_anciano por coef_madurez
                     'es_predefinido': True
                 },
                 {
                     'nombre': 'Tomate',
                     'descripcion': 'Cultivo de tomate',
                     'coef_plantula': 0.4,
-                    'coef_adulto': 1.15,
-                    'coef_anciano': 0.7,
+                    'coef_crecimiento': 1.15,
+                    'coef_madurez': 0.7,
                     'es_predefinido': True
                 },
                 {
                     'nombre': 'Alfalfa',
                     'descripcion': 'Cultivo de alfalfa',
                     'coef_plantula': 0.35,
-                    'coef_adulto': 0.95,
-                    'coef_anciano': 0.5,
+                    'coef_crecimiento': 0.95,
+                    'coef_madurez': 0.5,
                     'es_predefinido': True
                 },
                 {
                     'nombre': 'Frijol',
                     'descripcion': 'Cultivo de frijol',
                     'coef_plantula': 0.3,
-                    'coef_adulto': 1.05,
-                    'coef_anciano': 0.6,
+                    'coef_crecimiento': 1.05,
+                    'coef_madurez': 0.6,
                     'es_predefinido': True
                 },
                 {
                     'nombre': 'Trigo',
                     'descripcion': 'Cultivo de trigo',
                     'coef_plantula': 0.3,
-                    'coef_adulto': 1.15,
-                    'coef_anciano': 0.4,
+                    'coef_crecimiento': 1.15,
+                    'coef_madurez': 0.4,
                     'es_predefinido': True
                 }
             ]

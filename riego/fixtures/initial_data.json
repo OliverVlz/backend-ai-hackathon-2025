@@ -5,9 +5,9 @@
     "fields": {
       "nombre": "Maíz",
       "descripcion": "Cultivo de maíz común",
-      "coef_plantula": 0.3,
-      "coef_adulto": 1.15,
-      "coef_anciano": 0.4,
+      "coef_plantula": 0.35,
+      "coef_crecimiento": 1.05,
+      "coef_madurez": 1.1,
       "es_predefinido": true
     }
   },
@@ -17,9 +17,9 @@
     "fields": {
       "nombre": "Tomate",
       "descripcion": "Cultivo de tomate",
-      "coef_plantula": 0.7,
-      "coef_adulto": 1.05,
-      "coef_anciano": 0.8,
+      "coef_plantula": 0.6,
+      "coef_crecimiento": 1.2,
+      "coef_madurez": 1.0,
       "es_predefinido": true
     }
   },
@@ -29,9 +29,9 @@
     "fields": {
       "nombre": "Alfalfa",
       "descripcion": "Cultivo de alfalfa",
-      "coef_plantula": 0.4,
-      "coef_adulto": 1.2,
-      "coef_anciano": 1.15,
+      "coef_plantula": 0.45,
+      "coef_crecimiento": 1.25,
+      "coef_madurez": 1.3,
       "es_predefinido": true
     }
   },
